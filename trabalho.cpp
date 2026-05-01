@@ -72,7 +72,7 @@ class Sistema{
             return;
         }
         if (!vooEncontrado->verificavooemplanejamento()){
-            cout << "o voo já sai da fase de planejamento" << endl;
+            cout << "o voo já saiu da fase de planejamento" << endl;
             return;
         }
         Astronauta *astronautaEncontrado = buscarAstronauta(cpf);
