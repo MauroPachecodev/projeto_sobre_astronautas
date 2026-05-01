@@ -51,7 +51,22 @@ class Sistema{
         }
         return nullptr;
     }
-    void cadastrarastronauta(string& cpf, int idade, string& nome){
+
+    void imprimirVoo(Voo &voo, string estado) {
+        cout <<"voo de codigo: "<< voo.codigo << endl;
+        cout << "voo em estado de: " << estado << endl;
+        cout << "cpfs e nomes dos passageiros: " << endl;
+        for (auto &j : voo.cpfarray) {
+            Astronauta * astronauta = buscarAstronauta(j);
+            cout << astronauta->cpf << " - " << astronauta->nome << endl;
+        } 
+        if (voo.cpfarray.empty()) {
+            cout << "nenhum astronauta presente neste voo" << endl; 
+        }
+        
+    }
+
+    void cadastrarastronauta(string& cpf, int idade, string& nome) {
     if (buscarAstronauta(cpf) != nullptr) {
             cout << "Erro: CPF " << cpf << " já cadastrado no sistema" << endl;
             return;
@@ -176,67 +191,38 @@ class Sistema{
             astronauta->disponivel = true;
         }
     }
-    void listarvoos(){
-        for(Voo &i : listadevoos){
-            if (i.estadovoo == 0){
-                cout <<"voo de codigo: "<< i.codigo << endl;
-                cout << "voo em estado de: planejamento " << endl;
-                cout << "cpfs e nomes dos passageiros: " << endl;
-                for (auto &j : i.cpfarray){
-                    Astronauta * astronauta = buscarAstronauta(j);
-                    cout << astronauta->cpf << endl;
-                    cout << astronauta->nome << endl;
-                }
+
+    void listarvoos() {
+        for (Voo &i : listadevoos) {
+            if (i.estadovoo == 0) {
+                imprimirVoo(i, "planejamento");
             }
         }
-        for(Voo &i : listadevoos){
-            if (i.estadovoo == 1){
-                cout <<"voo de codigo: "<< i.codigo << endl;
-                cout << "voo em estado de: em curso" << endl;
-                cout << "cpfs e nomes dos passageiros: " << endl;
-                for (auto &j : i.cpfarray){
-                    Astronauta * astronauta = buscarAstronauta(j);
-                    cout << astronauta->cpf << endl;
-                    cout << astronauta->nome << endl;
-                }
+        for (Voo &i : listadevoos) {
+            if (i.estadovoo == 1) {
+                imprimirVoo(i, "em curso");
             }
         }
-        for(Voo &i : listadevoos){
-            if (i.estadovoo == 2){
-                cout <<"voo de codigo: "<< i.codigo << endl;
-                cout << "voo em estado de: finalizado com sucesso " << endl;
-                cout << "cpfs e nomes dos passageiros: " << endl;
-                for (auto &j : i.cpfarray){
-                    Astronauta * astronauta = buscarAstronauta(j);
-                    cout << astronauta->cpf << endl;
-                    cout << astronauta->nome << endl;
-                }
+        for (Voo &i : listadevoos) {
+            if (i.estadovoo == 2) {
+                imprimirVoo(i, "finalizado com sucesso");
             }
         }
-        for(Voo &i : listadevoos){
-            if (i.estadovoo == 3){
-                cout <<"voo de codigo: "<< i.codigo << endl;
-                cout << "voo em estado de: finalizado com explosão" << endl;
-                cout << "cpfs e nomes dos passageiros: " << endl;
-                for (auto &j : i.cpfarray){
-                    Astronauta * astronauta = buscarAstronauta(j);
-                    cout << astronauta->cpf << endl;
-                    cout << astronauta->nome << endl;
-                }
+        for (Voo &i : listadevoos) {
+            if (i.estadovoo == 3) {
+                imprimirVoo(i, "finalizado com explosão");
             }
         }
     }
-    void listarmortos(){
-        for (auto &i : listadeastronautas){
+
+    void listarmortos() {
+        for (auto &i : listadeastronautas) {
             if (i.vivo == false){
-                cout << i.cpf << endl;
-                cout << i.nome << endl;
+                cout << i.cpf << " - " << i.nome << endl;
                 cout << "voos que participou" << endl;
-                for (auto &j : listadevoos)
-                {
-                    for (auto &k : j.cpfarray)
-                    {
-                        if(k == i.cpf){
+                for (auto &j : listadevoos) {
+                    for (auto &k : j.cpfarray) {
+                        if (k == i.cpf) {
                             cout << j.codigo << endl;
                         }
                     }
@@ -245,60 +231,85 @@ class Sistema{
         }
     }
 };
+
 int main(){
     Sistema sistema; 
     string comando;
     while (cin >> comando) {
+        bool comandoReconhecido = false;
         if (comando == "FIM") {
-        break;
+            break;
         }
-    if (comando == "CADASTRAR_ASTRONAUTA") {
-        string cpf, nome;
-        int idade;
-        cin >> cpf >> idade;
-        getline(cin >> ws, nome);
-        sistema.cadastrarastronauta(cpf, idade, nome);
+
+        if (comando == "CADASTRAR_ASTRONAUTA") {
+            string cpf, nome;
+            int idade;
+            cin >> cpf >> idade;
+            getline(cin >> ws, nome);
+            sistema.cadastrarastronauta(cpf, idade, nome);
+            comandoReconhecido = true;
+            cout << "Astronauta cadastrado com sucesso." << endl;
+        }
+
+        if (comando == "CADASTRAR_VOO") {
+            int codigo;
+            cin >> codigo;
+            sistema.cadastrarvoo(codigo);
+            comandoReconhecido = true;
+        }
+
+        if (comando == "ADICIONAR_ASTRONAUTA") {
+            string cpf;
+            int codigo;
+            cin >> cpf;
+            cin >> codigo;
+            sistema.astronautaparavoo(cpf, codigo);
+            comandoReconhecido = true;
+        }
+
+        if (comando == "REMOVER_ASTRONAUTA") {
+            string cpf;
+            int codigo;
+            cin >> cpf;
+            cin >> codigo;
+            sistema.removeastronautadevoo(cpf, codigo);
+            comandoReconhecido = true;
+        }
+
+        if (comando == "LANCAR_VOO") {
+            int codigo;
+            cin >> codigo;
+            sistema.lancarvoo(codigo);
+            comandoReconhecido = true;
+        }
+
+        if(comando == "EXPLODIR_VOO") {
+            int codigo;
+            cin >> codigo;
+            sistema.explodirvoo(codigo);
+            comandoReconhecido = true;
+        }
+
+        if (comando == "FINALIZAR_VOO") {
+            int codigo;
+            cin >> codigo;
+            sistema.finalizarvoo(codigo);
+            comandoReconhecido = true;
+        }
+
+        if (comando == "LISTAR_VOOS") {
+            sistema.listarvoos();
+            comandoReconhecido = true;
+        }
+
+        if (comando == "LISTAR_MORTOS") {
+            sistema.listarmortos();
+            comandoReconhecido = true;
+        }
+
+        if (!comandoReconhecido) {
+            cout << "Comando não reconhecido." << endl;
+        }
     }
-    if (comando == "CADASTRAR_VOO"){
-        int codigo;
-        cin >> codigo;
-        sistema.cadastrarvoo(codigo);
-    }
-    if (comando == "ADICIONAR_ASTRONAUTA"){
-        string cpf;
-        int codigo;
-        cin >> cpf;
-        cin >> codigo;
-        sistema.astronautaparavoo(cpf, codigo);
-    }
-    if (comando == "REMOVER_ASTRONAUTA"){
-        string cpf;
-        int codigo;
-        cin >> cpf;
-        cin >> codigo;
-        sistema.removeastronautadevoo(cpf, codigo);
-    }
-    if (comando == "LANCAR_VOO"){
-        int codigo;
-        cin >> codigo;
-        sistema.lancarvoo(codigo);
-    }
-    if(comando == "EXPLODIR_VOO"){
-        int codigo;
-        cin >> codigo;
-        sistema.explodirvoo(codigo);
-    }
-    if (comando == "FINALIZAR_VOO"){
-        int codigo;
-        cin >> codigo;
-        sistema.finalizarvoo(codigo);
-    }
-    if (comando == "LISTAR_VOOS"){
-        sistema.listarvoos();
-    }
-    if (comando == "LISTAR_MORTOS"){
-        sistema.listarmortos();
-    }
-}
     return 0;
 }
