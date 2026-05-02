@@ -193,31 +193,41 @@ class Sistema{
     }
 
     void listarvoos() {
+        bool temvoo = false;
         for (Voo &i : listadevoos) {
             if (i.estadovoo == 0) {
                 imprimirVoo(i, "planejamento");
+                temvoo = true;
             }
         }
         for (Voo &i : listadevoos) {
             if (i.estadovoo == 1) {
                 imprimirVoo(i, "em curso");
+                temvoo = true;
             }
         }
         for (Voo &i : listadevoos) {
             if (i.estadovoo == 2) {
                 imprimirVoo(i, "finalizado com sucesso");
-            }
+                temvoo = true;
+        }
         }
         for (Voo &i : listadevoos) {
             if (i.estadovoo == 3) {
                 imprimirVoo(i, "finalizado com explosão");
+                temvoo = true;
             }
         }
+        if (!temvoo){
+            cout << "sem voos cadastrados" << endl;
+        }
     }
-
+    
     void listarmortos() {
+        bool temmorto = false;
         for (auto &i : listadeastronautas) {
             if (i.vivo == false){
+                temmorto = true;
                 cout << i.cpf << " - " << i.nome << endl;
                 cout << "voos que participou" << endl;
                 for (auto &j : listadevoos) {
@@ -228,6 +238,9 @@ class Sistema{
                     }
                 }         
             }
+        }
+        if (!temmorto){
+            cout << "não tem mortos no momento" << endl;
         }
     }
 };
