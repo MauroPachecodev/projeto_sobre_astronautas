@@ -1,4 +1,6 @@
-#include "sistemadeastronauta.h"
+#include "sistema.hpp"
+#include <iostream>
+#include <string>
 using namespace std;
 int main(){
     Sistema sistema; 
