@@ -1,85 +1,89 @@
 #include "sistema.hpp"
 #include <iostream>
 #include <string>
+
 using namespace std;
-int main(){
+
+int main() {
     Sistema sistema; 
     string comando;
+
     while (cin >> comando) {
-        bool comandoReconhecido = false;
         if (comando == "FIM") {
             break;
         }
 
-        if (comando == "CADASTRAR_ASTRONAUTA") {
+        else if (comando == "CADASTRAR_ASTRONAUTA") {
             string cpf, nome;
             int idade;
             cin >> cpf >> idade;
             getline(cin >> ws, nome);
-            sistema.cadastrarastronauta(cpf, idade, nome);
-            comandoReconhecido = true;
-            cout << "Astronauta cadastrado com sucesso." << endl;
+            if(sistema.cadastrarastronauta(cpf, idade, nome)) {
+                cout << "Astronauta cadastrado com sucesso." << endl;
+            }
         }
 
-        if (comando == "CADASTRAR_VOO") {
+        else if (comando == "CADASTRAR_VOO") {
             int codigo;
             cin >> codigo;
-            sistema.cadastrarvoo(codigo);
-            comandoReconhecido = true;
+            if(sistema.cadastrarvoo(codigo)) {
+                cout << "Voo cadastrado com sucesso." << endl;
+            }
         }
 
-        if (comando == "ADICIONAR_ASTRONAUTA") {
+        else if (comando == "ADICIONAR_ASTRONAUTA") {
             string cpf;
             int codigo;
-            cin >> cpf;
-            cin >> codigo;
-            sistema.astronautaparavoo(cpf, codigo);
-            comandoReconhecido = true;
+            cin >> cpf >> codigo;
+            if(sistema.astronautaparavoo(cpf, codigo)) {
+                cout << "Astronauta adicionado ao voo " << codigo << " com sucesso." << endl;
+            }
         }
 
-        if (comando == "REMOVER_ASTRONAUTA") {
+        else if (comando == "REMOVER_ASTRONAUTA") {
             string cpf;
             int codigo;
-            cin >> cpf;
-            cin >> codigo;
-            sistema.removeastronautadevoo(cpf, codigo);
-            comandoReconhecido = true;
+            cin >> cpf >> codigo;
+            if(sistema.removeastronautadevoo(cpf, codigo)) {
+                cout << "Astronauta removido do voo " << codigo << " com sucesso." << endl;
+            }
         }
 
-        if (comando == "LANCAR_VOO") {
+        else if (comando == "LANCAR_VOO") {
             int codigo;
             cin >> codigo;
-            sistema.lancarvoo(codigo);
-            comandoReconhecido = true;
+            if(sistema.lancarvoo(codigo)) {
+                cout << "Voo " << codigo << " lancado com sucesso! Boa sorte aos astronautas." << endl;
+            }
         }
 
-        if(comando == "EXPLODIR_VOO") {
+        else if (comando == "EXPLODIR_VOO") {
             int codigo;
             cin >> codigo;
-            sistema.explodirvoo(codigo);
-            comandoReconhecido = true;
+            if(sistema.explodirvoo(codigo)) {
+                cout << "Voo " << codigo << " encerrado com uma explosao catastrofica." << endl;
+            }
         }
 
-        if (comando == "FINALIZAR_VOO") {
+        else if (comando == "FINALIZAR_VOO") {
             int codigo;
             cin >> codigo;
-            sistema.finalizarvoo(codigo);
-            comandoReconhecido = true;
+            if(sistema.finalizarvoo(codigo)) {
+                cout << "Voo " << codigo << " finalizado com sucesso. Astronautas retornaram em seguranca." << endl;
+            }
         }
 
-        if (comando == "LISTAR_VOOS") {
+        else if (comando == "LISTAR_VOOS") {
             sistema.listarvoos();
-            comandoReconhecido = true;
         }
 
-        if (comando == "LISTAR_MORTOS") {
+        else if (comando == "LISTAR_MORTOS") {
             sistema.listarmortos();
-            comandoReconhecido = true;
         }
-
-        if (!comandoReconhecido) {
-            cout << "Comando não reconhecido." << endl;
+        else {
+            cout << "Comando nao reconhecido." << endl;
         }
     }
+
     return 0;
 }

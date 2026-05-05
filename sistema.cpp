@@ -32,94 +32,98 @@ void Sistema::imprimirVoo(Voo &voo, string estado) {
     }
 }
 
-void Sistema::cadastrarastronauta(string& cpf, int idade, string& nome) {
+bool Sistema::cadastrarastronauta(string& cpf, int idade, string& nome) {
     if (buscarAstronauta(cpf) != nullptr) {
         cout << "Erro: CPF " << cpf << " já cadastrado no sistema" << endl;
-        return;
+        return false;
     }
     listadeastronautas.push_back(Astronauta(cpf, idade, nome));
+    return true;
 }
 
-void Sistema::cadastrarvoo(int codigo){
+bool Sistema::cadastrarvoo(int codigo){
     if (buscarVoo(codigo) != nullptr) {
         cout << "Erro: código " << codigo << " já existente" << endl;
-        return;
+        return false;
     }
     listadevoos.push_back(Voo(codigo));
+    return true;
 }
 
-void Sistema::astronautaparavoo(string& cpf, int codigo){
+bool Sistema::astronautaparavoo(string& cpf, int codigo){
     Voo *vooEncontrado = buscarVoo(codigo);
     if(vooEncontrado == nullptr){
         cout << "erro, voo não encontrado" << endl;
-        return;
+        return false;
     }
     if (!vooEncontrado->verificavooemplanejamento()){
         cout << "o voo já saiu da fase de planejamento" << endl;
-        return;
+        return false;
     }
     Astronauta *astronautaEncontrado = buscarAstronauta(cpf);
     if (astronautaEncontrado == nullptr){
         cout << "astronauta não cadastrado" << endl;
-        return;
+        return false;
     }
     if(!astronautaEncontrado->astrounautaestavivo()){
         cout << "o astronauta está morto" << endl;
-        return;
+        return false;
     }
     for (const auto&i : vooEncontrado->cpfarray){
         if (i == cpf){
             cout << "astronauta já está presente neste voo" << endl;
-            return;
+            return false;
         }
     }
     vooEncontrado->cpfarray.push_back(astronautaEncontrado->cpf);
+    return true;
 }
 
-void Sistema::removeastronautadevoo(string& cpf, int codigo){
+bool Sistema::removeastronautadevoo(string& cpf, int codigo){
     Voo * vooAlvo = buscarVoo(codigo);
     if (vooAlvo == nullptr){
         cout << "voo não cadastrado" << endl;
-        return;
+        return false;
     }
     if (!vooAlvo->verificavooemplanejamento()){
         cout << "voo não está planejado" << endl;
-        return;
+        return false;
     }
     Astronauta * astronautaAlvo = buscarAstronauta(cpf);
     if (astronautaAlvo == nullptr){
         cout << "astronauta não cadastrado" << endl;
-        return;
+        return false;
     }
     for (auto i = vooAlvo->cpfarray.begin(); i != vooAlvo->cpfarray.end(); ++i) {
         if (*i == cpf) {
             vooAlvo->cpfarray.erase(i);
             cout << "Astronauta removido do voo." << endl;
-            return;
+            return false;
         }
     }
     cout << "Astronauta nao encontrado neste voo." << endl;
+    return true;
 }
 
-void Sistema::lancarvoo(int codigo){
+bool Sistema::lancarvoo(int codigo){
     Voo *vooAlvo = buscarVoo(codigo);
     if (vooAlvo == nullptr){
         cout << "voo não está cadastrado" << endl;
-        return;
+        return false;
     }
     if(!vooAlvo->verificavooemplanejamento()){
         cout << "voo não planejado" << endl;
-        return;
+        return false;
     }
     if (vooAlvo->cpfarray.size() <= 0){
         cout << "voo sem astronautas, erro no lançamento" << endl;
-        return;
+        return false;
     }
     for(auto &i : vooAlvo->cpfarray){
         Astronauta * astronauta = buscarAstronauta(i);
         if (astronauta == nullptr || astronauta->vivo == false || astronauta->disponivel == false){
             cout << "astronauta não está vivo ou não está disponível" << endl;
-            return;
+            return false;
         }  
     }
     for(auto &i : vooAlvo->cpfarray){
@@ -127,17 +131,18 @@ void Sistema::lancarvoo(int codigo){
         astronauta->disponivel = false;
     }
     vooAlvo->estadovoo = 1;
+    return true;
 }
 
-void Sistema::explodirvoo(int codigo){
+bool Sistema::explodirvoo(int codigo){
     Voo *vooAlvo = buscarVoo(codigo);
     if (vooAlvo == nullptr) {
         cout << "voo não cadastrado" << endl;
-        return;
+        return false;
     }
     if (vooAlvo->estadovoo != 1){
         cout << "erro! voo não está em curso" << endl;
-        return;
+        return false;
     }
     vooAlvo->estadovoo = 3;
     for (auto &i : vooAlvo->cpfarray){
@@ -145,23 +150,25 @@ void Sistema::explodirvoo(int codigo){
             astronauta->vivo = false;
             astronauta->disponivel = false;
     }
+    return true;
 }
 
-void Sistema::finalizarvoo(int codigo){
+bool Sistema::finalizarvoo(int codigo){
     Voo *vooAlvo = buscarVoo(codigo);
     if (vooAlvo == nullptr){
         cout << "Erro: Voo nao encontrado." << endl;
-        return;
+        return false;
     }
     if (vooAlvo->estadovoo != 1){
         cout << "voo não está em curso" << endl;
-        return;
+        return false;
     }
     vooAlvo->estadovoo = 2;
     for (auto &i : vooAlvo->cpfarray){
         Astronauta * astronauta = buscarAstronauta(i);
         astronauta->disponivel = true;
     }
+    return true;
 }
 
 void Sistema::listarvoos() {
